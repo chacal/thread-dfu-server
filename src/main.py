@@ -4,6 +4,7 @@ import asyncio
 
 from helpers import *
 from dfu_server import start_dfu_server
+from dfu_trigger import trigger_dfu
 
 
 def main():
@@ -13,6 +14,7 @@ def main():
     with tempfile.TemporaryDirectory() as tmpdir:
         extract_zip(dfu_pkg, tmpdir)
         start_dfu_server(tmpdir)
+        trigger_dfu(target_addr)
         asyncio.get_event_loop().run_forever()
 
 
