@@ -45,12 +45,11 @@ def create_trigger(bin_file, dat_file):
                        crc(bin_file))
 
 
-async def send_trigger_request(target_addr, trigger):
-    protocol = await Context.create_client_context()
+async def send_trigger_request(ctx, target_addr, trigger):
     request = Message(code=Code.POST, uri="coap://[" + target_addr + "]/t", payload=trigger)
 
     try:
-        response = await protocol.request(request).response
+        response = await ctx.request(request).response
     except Exception as e:
         log("Failed to fetch resource:")
         log(e)
@@ -58,13 +57,13 @@ async def send_trigger_request(target_addr, trigger):
         log("Trigger result: %s\n%r" % (response.code, response.payload))
 
 
-async def start_sending_trigger(target_addr, trigger):
+async def start_sending_trigger(ctx, target_addr, trigger):
     log("Sending trigger in 2 seconds..")
     await asyncio.sleep(2)
     log("Sending trigger to %s" % target_addr)
-    await send_trigger_request(target_addr, trigger)
+    await send_trigger_request(ctx, target_addr, trigger)
 
 
-def trigger_dfu(target_addr, bin_file, dat_file):
+def trigger_dfu(ctx, target_addr, bin_file, dat_file):
     trigger = create_trigger(bin_file, dat_file)
-    asyncio.Task(start_sending_trigger(target_addr, trigger))
+    asyncio.Task(start_sending_trigger(ctx, target_addr, trigger))
