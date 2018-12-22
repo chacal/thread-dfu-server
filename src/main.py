@@ -3,6 +3,7 @@ import tempfile
 import aiocoap.resource as resource
 import aiocoap
 import asyncio
+import threading
 
 from file_resource import FileResource
 from helpers import *
@@ -15,15 +16,25 @@ def create_file_resources(dfu_pkg_dir):
     return FileResource(bin_file), FileResource(dat_file)
 
 
-def start_dfu_server(bin_resource, dat_resource):
+def create_dfu_server(bin_resource, dat_resource):
     root = resource.Site()
     root.add_resource(('.well-known', 'core'), resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(('f',), bin_resource)
     root.add_resource(('i',), dat_resource)
+    return aiocoap.Context.create_server_context(root)
 
-    asyncio.Task(aiocoap.Context.create_server_context(root))
 
-    asyncio.get_event_loop().run_forever()
+def run_in_background(loop):
+    asyncio.set_event_loop(loop)
+    loop.run_forever()
+
+
+def start_dfu_server(bin_resource, dat_resource):
+    asyncio.Task(create_dfu_server(bin_resource, dat_resource))
+
+    loop = asyncio.get_event_loop()
+    t = threading.Thread(target=run_in_background, args=(loop,))
+    t.start()
 
 
 def main():
@@ -34,6 +45,7 @@ def main():
         extract_zip(dfu_pkg, tmpdir)
         bin_resource, dat_resource = create_file_resources(tmpdir)
         start_dfu_server(bin_resource, dat_resource)
+        print("Started DFU server..")
 
 
 if __name__ == "__main__":
