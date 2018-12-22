@@ -5,6 +5,10 @@ import zipfile
 import json
 
 
+def log(msg):
+    print(msg, flush=True)
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--dfu_pkg", help="DFU package (read from stdin, if omitted)", nargs="?",
