@@ -25,3 +25,4 @@ def start_dfu_server(dfu_pkg_dir):
     bin_resource, dat_resource = create_file_resources(dfu_pkg_dir)
     asyncio.Task(create_dfu_server(bin_resource, dat_resource))
     log("Started DFU server..")
+    return bin_resource.content, dat_resource.content

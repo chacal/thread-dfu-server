@@ -13,8 +13,8 @@ def main():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         extract_zip(dfu_pkg, tmpdir)
-        start_dfu_server(tmpdir)
-        trigger_dfu(target_addr)
+        bin_file, dat_file = start_dfu_server(tmpdir)
+        trigger_dfu(target_addr, bin_file, dat_file)
         asyncio.get_event_loop().run_forever()
 
 
