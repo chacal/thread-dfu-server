@@ -2,6 +2,7 @@ import argparse
 import sys
 import io
 import zipfile
+import json
 
 
 def parse_arguments():
@@ -17,3 +18,15 @@ def parse_arguments():
 def extract_zip(zip_bytes, target_dir):
     with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zip_ref:
         zip_ref.extractall(target_dir)
+
+
+def read_manifest(manifest_path):
+    with open(manifest_path, 'r') as manifest:
+        return json.load(manifest)
+
+
+def read_file(path):
+    f = open(path, "rb")
+    content = f.read()
+    f.close()
+    return content

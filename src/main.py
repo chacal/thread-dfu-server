@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
 
-import asyncio
-import aiocoap.resource as resource
-import aiocoap
+from file_resource import FileResource
 from helpers import *
 import tempfile
-import os
 
 
-class FileResource(resource.Resource):
-    def __init__(self, file_content):
-        super().__init__()
-        self.content = file_content
-
-    async def render_get(self, request):
-        return aiocoap.Message(payload=self.content)
+def create_file_resources(dfu_pkg_dir):
+    manifest = read_manifest(dfu_pkg_dir + "/manifest.json")
+    bin_file = read_file(dfu_pkg_dir + "/" + manifest["manifest"]["application"]["bin_file"])
+    dat_file = read_file(dfu_pkg_dir + "/" + manifest["manifest"]["application"]["dat_file"])
+    return FileResource(bin_file), FileResource(dat_file)
 
 
 def main():
@@ -23,7 +18,7 @@ def main():
 
     with tempfile.TemporaryDirectory() as tmpdir:
         extract_zip(dfu_pkg, tmpdir)
-        print(os.listdir(tmpdir))
+        bin_resource, dat_resource = create_file_resources(tmpdir)
 
 
 if __name__ == "__main__":
