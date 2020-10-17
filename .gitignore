@@ -4,3 +4,6 @@ include
 lib
 .Python
 __pycache__
+lib64
+pyvenv.cfg
+share
