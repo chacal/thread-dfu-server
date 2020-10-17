@@ -1,5 +1,5 @@
 import asyncio
-from aiocoap import Context, Message, Code
+from aiocoap import Context, Message, Code, NON
 import struct
 import binascii
 
@@ -46,7 +46,7 @@ def create_trigger(bin_file, dat_file):
 
 
 async def send_trigger_request(ctx, target_addr, trigger):
-    request = Message(code=Code.POST, uri="coap://[" + target_addr + "]/t", payload=trigger)
+    request = Message(code=Code.POST, mtype=NON, uri="coap://[" + target_addr + "]/t", payload=trigger)
 
     try:
         response = await ctx.request(request).response
