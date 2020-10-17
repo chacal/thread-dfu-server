@@ -3,11 +3,14 @@ import tempfile
 import asyncio
 import aiocoap
 import aiocoap.resource as resource
+import logging
 
 from helpers import *
 from dfu_server import start_dfu_server
 from dfu_trigger import trigger_dfu
 
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("coap-server").setLevel(logging.DEBUG)
 
 def create_aiocoap_ctx():
     return aiocoap.Context.create_server_context(resource.Site())
